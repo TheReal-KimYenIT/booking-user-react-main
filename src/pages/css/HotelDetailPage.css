@@ -1,0 +1,197 @@
+/* Lưới ảnh thư viện (Gallery) */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 200px);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.photo-item {
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.photo-item:hover {
+    opacity: 0.9;
+}
+
+.main-photo {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* Bảng danh sách phòng */
+.room-table-header {
+    display: grid;
+    grid-template-columns: 3fr 2fr 2fr 2fr;
+    background: #f8fafc;
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.room-row {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    background: #fff;
+}
+
+.room-row:last-child {
+    border-radius: 0 0 8px 8px;
+    border-bottom: none;
+}
+
+.room-info-col {
+    flex: 3;
+    padding: 20px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.room-options-col {
+    flex: 6;
+}
+
+.option-row {
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr;
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    align-items: center;
+}
+
+.option-row:last-child {
+    border-bottom: none;
+}
+
+/* Nút thả tim */
+.hc-fav-btn-detail {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f1f5f9;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.hc-fav-btn-detail:hover {
+    background: #e2e8f0;
+}
+
+.hc-fav-btn-detail::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.hc-fav-btn-detail::before {
+    content: '';
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+}
+
+.hc-fav-btn-detail:hover::after,
+.hc-fav-btn-detail:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Popup thông báo (Toast) */
+.toast-popup {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1c2930;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    animation: slideUpFade 0.3s ease forwards;
+}
+
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        bottom: 10px;
+    }
+
+    100% {
+        opacity: 1;
+        bottom: 30px;
+    }
+}
+
+/* Responsive cho Mobile */
+@media (max-width: 991px) {
+    .hidden-mobile {
+        display: none;
+    }
+
+    .photo-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .main-photo {
+        grid-column: span 2;
+        grid-row: span 1;
+        height: 250px;
+    }
+
+    .room-table-header {
+        display: none;
+    }
+
+    .room-row {
+        flex-direction: column;
+    }
+
+    .room-info-col {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .option-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        text-align: left !important;
+    }
+
+    .option-row>div {
+        text-align: left !important;
+        padding-right: 0 !important;
+    }
+}

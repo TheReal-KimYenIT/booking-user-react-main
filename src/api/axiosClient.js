@@ -1,26 +1,41 @@
 import axios from 'axios';
 
-// Khởi tạo trạm phát sóng mặc định nối tới Laravel (Backend)
 const axiosClient = axios.create({
-  baseURL: 'https://booking-backend-laravel-production.up.railway.app/api', // Chú ý: Đảm bảo Backend Laravel của bạn đang chạy ở port 8000
+  // Sử dụng biến môi trường, nhớ tạo file .env và thêm: REACT_APP_API_BASE_URL=http://localhost:8000/api
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
 });
 
-// INTERCEPTOR: Người gác cổng tự động
-// Trước khi bất kỳ Request nào được gửi đi, nó sẽ chạy qua đây
-axiosClient.interceptors.request.use(
-  (config) => {
-    // Tìm trong localStorage xem có Thẻ ra vào (Token) của Khách hàng không
-    const token = localStorage.getItem('customer_token');
-    if (token) {
-      // Nếu có, tự động kẹp vào phần Header để gửi cho Laravel
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+// CHIỀU ĐI: Gắn Token
+axiosClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('customer_token');
+  // Chặn thêm các chuỗi 'null' / 'undefined' rác
+  if (token && token !== 'undefined' && token !== 'null') {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => Promise.reject(error));
+
+// CHIỀU VỀ: Xử lý lỗi Token hết hạn (BỔ SUNG)
+axiosClient.interceptors.response.use(
+  (response) => {
+    return response; // Giữ nguyên để khớp với các file API hiện tại của bạn
   },
   (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn('Token đã hết hạn hoặc không hợp lệ. Đăng xuất...');
+      // Xóa rác trong kho
+      localStorage.removeItem('customer_token');
+      localStorage.removeItem('customer_info');
+
+      // Đá về trang đăng nhập (Nếu đang không ở trang login)
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
     return Promise.reject(error);
   }
 );

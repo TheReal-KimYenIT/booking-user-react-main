@@ -1,0 +1,404 @@
+.checkout-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    margin-bottom: 25px;
+}
+
+.checkout-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.form-control-custom:focus {
+    border-color: #dfa974;
+    box-shadow: 0 0 0 3px rgba(223, 169, 116, 0.2);
+}
+
+.req-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 12px;
+}
+
+.req-checkbox input {
+    accent-color: #dfa974;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.service-item:hover {
+    border-color: #dfa974;
+    background: #fffaf5;
+}
+
+.service-item.active {
+    border-color: #dfa974;
+    background: #fffaf5;
+    box-shadow: 0 0 0 1px #dfa974;
+}
+
+.summary-sticky {
+    position: sticky;
+    top: 20px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.price-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ef4444;
+}
+
+.login-banner {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+/* Custom Checkbox cho Dịch vụ */
+.custom-checkbox {
+    accent-color: #dfa974;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Bộ đếm số lượng Dịch vụ */
+.qty-control {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.btn-qty {
+    border: none;
+    background: transparent;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #64748b;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.btn-qty:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.qty-num {
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Nút Chọn Khuyến mãi (Bên ngoài Checkout) */
+.btn-open-promo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px dashed #0ea5e9;
+    color: #0ea5e9;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-open-promo:hover {
+    background: #e0f2fe;
+}
+
+/* Khung khi Đã áp dụng mã thành công */
+.applied-promo-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #dcfce3;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #bbf7d0;
+}
+
+.btn-remove-promo {
+    border: none;
+    background: #ef4444;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.old-price-strike {
+    text-decoration: line-through;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: normal;
+    margin-bottom: 4px;
+}
+
+/* ================================ */
+/* GIAO DIỆN MODAL DANH SÁCH MÃ GIẢM GIÁ */
+/* ================================ */
+.promo-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(2px);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.promo-modal-content {
+    background: #fff;
+    width: 450px;
+    max-width: 95%;
+    max-height: 85vh;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.promo-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+}
+
+.btn-close-modal {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.btn-close-modal:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.promo-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.manual-promo-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.manual-promo-input input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+}
+
+.manual-promo-input button {
+    background: #0f172a;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.promo-group-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+/* Vé khuyến mãi trong Modal */
+.promo-ticket-item {
+    display: flex;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    transition: 0.2s;
+}
+
+.promo-ticket-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.promo-ticket-left {
+    width: 30%;
+    background: #0ea5e9;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
+    border-right: 2px dashed #fff;
+    position: relative;
+}
+
+.hotel-promo .promo-ticket-left {
+    background: #f59e0b;
+}
+
+/* Màu vàng cho KS */
+.promo-ticket-value {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.promo-ticket-right {
+    width: 70%;
+    padding: 15px;
+    position: relative;
+}
+
+.btn-use-promo {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-use-promo:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+/* CSS làm mờ vé không đủ điều kiện */
+.disabled-promo {
+    opacity: 0.5;
+    filter: grayscale(100%);
+    pointer-events: none;
+    /* Chặn click */
+}
+
+/* Chữ lý do mờ màu đỏ */
+.disabled-reason {
+    color: #ef4444;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 4px;
+}

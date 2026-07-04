@@ -13,9 +13,14 @@ export const AuthProvider = ({ children }) => {
     const checkUserLoggedIn = () => {
       const storedToken = localStorage.getItem('customer_token');
       const storedUser = localStorage.getItem('customer_info');
-      
-      if (storedToken && storedUser) {
+
+      // Bổ sung chặn token rác (undefined/null) ngay từ lúc mở web
+      if (storedToken && storedToken !== 'undefined' && storedToken !== 'null' && storedUser) {
         setUser(JSON.parse(storedUser));
+      } else {
+        // Dọn dẹp nếu có rác
+        localStorage.removeItem('customer_token');
+        localStorage.removeItem('customer_info');
       }
       setLoading(false);
     };
@@ -24,24 +29,36 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Hàm Đăng nhập
+  // Hàm Đăng nhập
   const login = async (email, password) => {
     try {
-      // Gọi API đăng nhập của Laravel
-      const response = await axiosClient.post('/auth/login', { email, password });
-      
-      // Giả sử Laravel trả về { access_token: "...", user: {...} }
-      const { access_token, user } = response.data; 
+      // SỬA LỖI: 
+      // 1. URL phải là /login (như đã khai báo trong api.php)
+      // 2. Phải truyền thêm type: 'customer' để Laravel biết tìm ở bảng nào
+      const response = await axiosClient.post('/login', {
+        email,
+        password,
+        type: 'customer'
+      });
+
+      const token = response.data.token;
+      const userData = response.data.user;
+
+      if (!token) {
+        return { success: false, message: 'Lỗi hệ thống: Backend không cấp token!' };
+      }
 
       // Cất Token và Thông tin vào Local Storage
-      localStorage.setItem('customer_token', access_token);
-      localStorage.setItem('customer_info', JSON.stringify(user));
-      
-      setUser(user);
+      localStorage.setItem('customer_token', token);
+      localStorage.setItem('customer_info', JSON.stringify(userData));
+
+      setUser(userData);
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        message: error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại!' 
+      return {
+        success: false,
+        // Bắt thông báo lỗi chi tiết từ Laravel trả về
+        message: error.response?.data?.message || 'Email hoặc mật khẩu không chính xác!'
       };
     }
   };

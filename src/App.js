@@ -1,36 +1,55 @@
 import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { BookingProvider } from './context/BookingContext';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import ListingPage from './pages/ListingPage';
-import HotelDetailPage from './pages/HotelDetailPage';
-import CheckoutPage from './pages/CheckoutPage';
-import OrdersPage from './pages/OrdersPage';
 
-// THÊM 2 DÒNG IMPORT NÀY
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+// --- IMPORT COMPONENTS ---
+import Layout from './components/common/Layout'; // Đã trỏ đúng vào thư mục common
 
-import './pages/pages.css';
+// --- IMPORT PUBLIC PAGES ---
+import HomePage from './pages/public/HomePage';
+import ListingPage from './pages/public/ListingPage';
+import HotelDetailPage from './pages/public/HotelDetailPage';
+import AboutPage from './pages/public/AboutPage';
+
+// --- IMPORT AUTH PAGES ---
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+
+// --- IMPORT CUSTOMER PAGES ---
+import CheckoutPage from './pages/customer/CheckoutPage';
+import CustomerProfile from './pages/customer/CustomerProfile';
+import OrdersPage from './pages/customer/OrdersPage';
+import MyChatsPage from './pages/customer/MyChatsPage';
+import PromotionsPage from './pages/public/PromotionsPage';
+
+// --- IMPORT GLOBAL CSS ---
 import './App.css';
 
 function App() {
   return (
     <BookingProvider>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Layout>
           <Routes>
+            {/* ====== PUBLIC ROUTES (Ai cũng xem được) ====== */}
             <Route path="/" element={<HomePage />} />
             <Route path="/hotels" element={<ListingPage />} />
             <Route path="/hotels/:id" element={<HotelDetailPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-            
-            {/* THÊM 2 ĐƯỜNG DẪN NÀY VÀO HỆ THỐNG */}
+
+            {/* ====== AUTH ROUTES (Đăng nhập / Đăng ký) ====== */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            
+
+            {/* ====== CUSTOMER ROUTES (Yêu cầu đăng nhập - Bạn có thể thêm thẻ bọc PrivateRoute sau này) ====== */}
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/profile" element={<CustomerProfile />} />
+
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/messages" element={<MyChatsPage />} />
+            <Route path="/promotions" element={<PromotionsPage />} />
+
+            {/* ====== FALLBACK ROUTE (Chặn đường dẫn sai) ====== */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>

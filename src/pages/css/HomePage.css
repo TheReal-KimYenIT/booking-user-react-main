@@ -1,0 +1,32 @@
+/* =========================================
+   HOMEPAGE CSS (ĐÃ DỌN DẸP SẠCH SẼ)
+========================================= */
+
+/* Hiệu ứng hover cho thẻ Điểm đến (Destinations) */
+.destination-card {
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.destination-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Hiệu ứng hover cho thẻ Khách sạn (Hotel Card) */
+.hotel-card-custom {
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.hotel-card-custom:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* Fix lỗi padding mỏng của nút Xem tất cả */
+.btn-xem-tat-ca {
+    padding: 12px 40px;
+    font-size: 16px;
+    border-width: 2px;
+}
