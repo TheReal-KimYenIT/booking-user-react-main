@@ -18,7 +18,12 @@ const customerApi = {
         return axiosClient.delete('/customer/account');
     },
 
+
     // --- QUẢN LÝ ĐẶT PHÒNG ---
+    createVnpayPayment: (data) => {
+        // data truyền vào sẽ có dạng: { booking_id: 15, bank_code: '' }
+        return axiosClient.post('/customer/payment/vnpay', data);
+    },
     createBooking: (data) => {
         return axiosClient.post('/customer/bookings', data);
     },
@@ -61,6 +66,7 @@ const customerApi = {
     getAllChats: () => {
         return axiosClient.get('/customer/chats');
     },
+
 };
 
 export default customerApi;

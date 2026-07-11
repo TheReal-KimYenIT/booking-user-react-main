@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { UserCircle, CheckCircle2, Tag, PlusCircle, X, Ticket, Minus, Plus, Building2, Users, Info } from 'lucide-react';
+import { UserCircle, CheckCircle2, Tag, PlusCircle, X, Ticket, Minus, Plus, Building2, Users, Info, CreditCard } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 import axiosClient from '../../api/axiosClient';
+import customerApi from '../../api/customerApi';
 import { AuthContext } from '../../context/AuthContext';
 import { todayISODate, addDaysISODate } from '../../utils/booking';
 import '../css/CheckoutPage.css';
@@ -20,6 +21,8 @@ const CheckoutPage = () => {
     const [availableServices, setAvailableServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [paymentMethod, setPaymentMethod] = useState('hotel');
+
     const [contactName, setContactName] = useState(user?.name || '');
     const [contactEmail, setContactEmail] = useState(user?.email || '');
     const [contactPhone, setContactPhone] = useState(user?.phone || '');
@@ -29,11 +32,13 @@ const CheckoutPage = () => {
     const [otherRequest, setOtherRequest] = useState('');
     const [selectedServices, setSelectedServices] = useState([]);
 
-    // STATE LƯU 2 LOẠI VOUCHER ĐỘC LẬP
     const [globalPromo, setGlobalPromo] = useState(null);
     const [hotelPromo, setHotelPromo] = useState(null);
     const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
     const [allPromos, setAllPromos] = useState({ global: [], hotels: [] });
+
+    // 👉 THÊM BIẾN LƯU % VAT
+    const [systemVatRate, setSystemVatRate] = useState(10);
 
     const checkInDate = searchParams.get('checkIn') || todayISODate();
     const checkOutDate = searchParams.get('checkOut') || addDaysISODate(todayISODate(), 1);
@@ -46,16 +51,29 @@ const CheckoutPage = () => {
         const fetchData = async () => {
             if (!hotelId || !roomId) { setLoading(false); return; }
             try {
-                const [hotelRes, servicesRes, promosRes] = await Promise.all([
+                // Tải thêm Cấu hình hệ thống để lấy % VAT
+                const [hotelRes, servicesRes, promosRes, settingsRes] = await Promise.all([
                     axiosClient.get(`/hotels/${hotelId}`),
                     axiosClient.get(`/hotels/${hotelId}/services`),
-                    axiosClient.get('/promotions/active')
+                    axiosClient.get('/promotions/active'),
+                    axiosClient.get('/system-settings') // Lấy VAT hiện tại
                 ]);
-                const hotelData = hotelRes.data.data;
+
+                const hotelData = hotelRes.data?.data || hotelRes.data;
                 setHotel(hotelData);
-                setRoom(hotelData.room_types.find(r => r.id.toString() === roomId));
+                setRoom(hotelData.room_types?.find(r => r.id.toString() === roomId));
                 if (servicesRes.data?.data) setAvailableServices(servicesRes.data.data);
-                if (promosRes.data?.data) setAllPromos(promosRes.data.data);
+
+                const pData = promosRes.data?.data || promosRes.data;
+                if (pData) {
+                    setAllPromos({ global: pData.global || [], hotels: pData.hotels || [] });
+                }
+
+                // Setup VAT từ Backend trả về
+                if (settingsRes.data?.data?.vat_rate !== undefined) {
+                    setSystemVatRate(Number(settingsRes.data.data.vat_rate));
+                }
+
             } catch (err) { console.error(err); } finally { setLoading(false); }
         };
         fetchData();
@@ -63,15 +81,10 @@ const CheckoutPage = () => {
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
-    // --------------------------------------------------
-    // ĐÃ FIX: TRÌNH TỰ TÍNH TOÁN CHUẨN HOÁ
-    // --------------------------------------------------
     const nights = Math.max(1, Math.round((new Date(checkOutDate) - new Date(checkInDate)) / 86400000));
     const roomPrice = room ? Number(room.base_price) * nights * urlRooms : 0;
-    const taxes = roomPrice * 0.1;
     const servicesTotalCost = selectedServices.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
 
-    // Tính Giá trị để so sánh mức đơn tối thiểu (Sàn tính trên Giá gốc, KS tính trên Giá sau khi đã trừ Sàn)
     const roomPriceForGlobal = roomPrice;
     const roomPriceForHotel = roomPrice - (globalPromo ? Number(globalPromo.discount_amount) : 0);
 
@@ -79,9 +92,12 @@ const CheckoutPage = () => {
     const discountHotel = hotelPromo ? Number(hotelPromo.discount_amount) : 0;
     const totalDiscountAmount = discountGlobal + discountHotel;
 
-    const rawTotal = roomPrice + taxes + servicesTotalCost - totalDiscountAmount;
+    // 👉 TÍNH TOÁN VAT THEO CÔNG THỨC MỚI: (Phòng + Dịch vụ - Khuyến mãi) * VAT %
+    const taxableAmount = Math.max(0, roomPrice + servicesTotalCost - totalDiscountAmount);
+    const taxes = taxableAmount * (systemVatRate / 100);
+
+    const rawTotal = taxableAmount + taxes;
     const totalPrice = Math.max(0, Math.round(rawTotal));
-    // --------------------------------------------------
 
     const handleToggleService = (service) => {
         const isExist = selectedServices.find(s => s.id === service.id);
@@ -97,23 +113,23 @@ const CheckoutPage = () => {
         }));
     };
 
-    const selectPromo = async (code, isManual = false) => {
+    const selectPromo = async (code) => {
+        if (!code || code.trim() === '') {
+            Swal.fire({ icon: 'warning', text: 'Vui lòng nhập mã khuyến mãi!' });
+            return;
+        }
+
         setIsPromoModalOpen(false);
         Swal.fire({ title: 'Đang kiểm tra mã...', didOpen: () => Swal.showLoading() });
 
         try {
-            const response = await axiosClient.post('/customer/promotions/check', { code: code, hotel_id: hotelId, subtotal: roomPrice });
+            const response = await axiosClient.post('/customer/promotions/check', { code: code.trim(), hotel_id: hotelId, subtotal: roomPrice });
             const data = response.data;
 
             if (data.type === 'global') {
-                setGlobalPromo({ code: code, discount_amount: data.discount_amount });
+                setGlobalPromo({ code: data.promo_data.code, discount_amount: data.discount_amount });
             } else {
-                const effectivePrice = roomPrice - (globalPromo ? Number(globalPromo.discount_amount) : 0);
-                if (data.promo_data.min_booking_value > effectivePrice) {
-                    Swal.fire({ icon: 'warning', title: 'Không đủ điều kiện', text: `Giá phòng tạm tính không đủ ${formatPrice(data.promo_data.min_booking_value)} để áp dụng mã Khách sạn này.` });
-                    return;
-                }
-                setHotelPromo({ code: code, discount_amount: data.discount_amount });
+                setHotelPromo({ code: data.promo_data.code, discount_amount: data.discount_amount });
             }
             Swal.fire({ icon: 'success', title: 'Áp dụng mã thành công!', timer: 1500, showConfirmButton: false });
         } catch (error) {
@@ -137,10 +153,24 @@ const CheckoutPage = () => {
         Swal.fire({ title: 'Đang xử lý đơn hàng...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         try {
             const response = await axiosClient.post('/customer/bookings', payload);
+
             if (response.data?.booking_code) {
-                Swal.fire({ icon: 'success', title: 'Tuyệt vời!', text: 'Mã đơn của bạn là: ' + response.data.booking_code, allowOutsideClick: false }).then(() => navigate('/orders'));
+                const newBookingId = response.data.booking_id || response.data.data?.id;
+
+                if (paymentMethod === 'vnpay') {
+                    if (!newBookingId) {
+                        Swal.fire('Lỗi', 'Hệ thống không trả về ID đơn hàng, vui lòng kiểm tra Backend', 'error');
+                        return;
+                    }
+                    const paymentRes = await customerApi.createVnpayPayment({ booking_id: newBookingId });
+                    window.location.href = paymentRes.data.payment_url;
+                } else {
+                    Swal.fire({ icon: 'success', title: 'Tuyệt vời!', text: 'Mã đơn của bạn là: ' + response.data.booking_code, allowOutsideClick: false }).then(() => navigate('/customer/my-bookings'));
+                }
             }
-        } catch (error) { Swal.fire({ icon: 'error', title: 'Thất bại', text: error.response?.data?.message || 'Có lỗi xảy ra.' }); }
+        } catch (error) {
+            Swal.fire({ icon: 'error', title: 'Thất bại', text: error.response?.data?.message || 'Có lỗi xảy ra.' });
+        }
     };
 
     if (loading) return <div style={{ minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><h3>Đang tải...</h3></div>;
@@ -212,6 +242,25 @@ const CheckoutPage = () => {
                                 <h3 className="checkout-title"><Info size={22} color="#dfa974" /> Yêu cầu đặc biệt</h3>
                                 <textarea className="form-control-custom" rows="3" value={otherRequest} onChange={e => setOtherRequest(e.target.value)}></textarea>
                             </div>
+
+                            <div className="checkout-card">
+                                <h3 className="checkout-title" style={{ marginBottom: '15px' }}>
+                                    <CreditCard size={22} color="#dfa974" /> Phương thức thanh toán
+                                </h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '10px', border: paymentMethod === 'hotel' ? '2px solid #3b82f6' : '1px solid #e2e8f0', borderRadius: '8px', background: paymentMethod === 'hotel' ? '#eff6ff' : '#fff' }}>
+                                        <input type="radio" name="payment" value="hotel" checked={paymentMethod === 'hotel'} onChange={() => setPaymentMethod('hotel')} style={{ width: '18px', height: '18px' }} />
+                                        <span style={{ fontWeight: 'bold', color: '#1e293b' }}>Thanh toán trực tiếp tại khách sạn</span>
+                                    </label>
+
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '10px', border: paymentMethod === 'vnpay' ? '2px solid #3b82f6' : '1px solid #e2e8f0', borderRadius: '8px', background: paymentMethod === 'vnpay' ? '#eff6ff' : '#fff' }}>
+                                        <input type="radio" name="payment" value="vnpay" checked={paymentMethod === 'vnpay'} onChange={() => setPaymentMethod('vnpay')} style={{ width: '18px', height: '18px' }} />
+                                        <img src="https://vnpay.vn/wp-content/uploads/2020/07/Logo-VNPAYQR-update.png" alt="VNPAY" style={{ height: '24px' }} />
+                                        <span style={{ fontWeight: 'bold', color: '#1e293b' }}>Thanh toán trực tuyến an toàn qua VNPAY</span>
+                                    </label>
+                                </div>
+                            </div>
+
                         </form>
                     </div>
 
@@ -254,7 +303,9 @@ const CheckoutPage = () => {
                                 {selectedServices.map(srv => (
                                     <div key={srv.id} className="price-row text-primary"><span>+ {srv.name} (x{srv.quantity})</span><span>{formatPrice(srv.price * srv.quantity)}</span></div>
                                 ))}
-                                <div className="price-row"><span>Thuế (10%)</span><span className="fw-bold text-dark">{formatPrice(taxes)}</span></div>
+
+                                {/* 👉 HIỂN THỊ ĐỘNG % VAT */}
+                                <div className="price-row"><span>Thuế ({systemVatRate}%)</span><span className="fw-bold text-dark">{formatPrice(taxes)}</span></div>
 
                                 <div style={{ marginTop: '20px', borderTop: '1px dashed #e2e8f0', paddingTop: '20px' }}>
                                     {globalPromo && (
@@ -293,7 +344,9 @@ const CheckoutPage = () => {
                                         <span style={{ color: '#e11d48', fontSize: '24px', display: 'block' }}>{formatPrice(totalPrice)}</span>
                                     </div>
                                 </div>
-                                <button onClick={handleSubmit} className="primary-btn border-0 w-100 mt-3" style={{ padding: '14px', borderRadius: '8px' }}>Tiếp tục thanh toán</button>
+                                <button onClick={handleSubmit} className="primary-btn border-0 w-100 mt-3" style={{ padding: '14px', borderRadius: '8px' }}>
+                                    {paymentMethod === 'vnpay' ? 'Thanh toán ngay' : 'Hoàn tất đặt phòng'}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -310,22 +363,22 @@ const CheckoutPage = () => {
                         <div className="promo-modal-body">
                             <div className="manual-promo-input">
                                 <input type="text" placeholder="Nhập mã..." id="manualCodeInput" style={{ textTransform: 'uppercase' }} />
-                                <button onClick={() => selectPromo(document.getElementById('manualCodeInput').value, true)}>Áp dụng</button>
+                                <button onClick={() => selectPromo(document.getElementById('manualCodeInput').value)}>Áp dụng</button>
                             </div>
 
-                            <div className="promo-list">
+                            <div className="promo-list mt-4">
                                 {allPromos.global?.length > 0 && <div className="promo-group-title">Mã từ Sàn Hiroto</div>}
                                 {allPromos.global?.map(p => {
                                     const isDisabled = p.min_booking_value > roomPriceForGlobal;
                                     return (
-                                        <div key={p.id} className={`promo-ticket-item ${isDisabled ? 'disabled-promo' : ''}`} style={isDisabled ? { cursor: 'not-allowed' } : {}}>
+                                        <div key={p.id} className={`promo-ticket-item ${isDisabled ? 'disabled-promo' : ''}`} style={isDisabled ? { cursor: 'not-allowed', opacity: 0.6 } : {}}>
                                             <div className="promo-ticket-left">
                                                 <span className="promo-ticket-value">{p.discount_type === 1 ? `${p.discount_value}%` : formatPrice(p.discount_value)}</span>
                                             </div>
                                             <div className="promo-ticket-right">
                                                 <b className="d-block text-dark">{p.code}</b>
                                                 {isDisabled ? (
-                                                    <span className="disabled-reason d-block">Cần thêm {formatPrice(p.min_booking_value - roomPriceForGlobal)} để dùng</span>
+                                                    <span className="disabled-reason d-block text-danger" style={{ fontSize: '12px' }}>Cần thêm {formatPrice(p.min_booking_value - roomPriceForGlobal)} để dùng</span>
                                                 ) : (
                                                     <span className="text-muted d-block" style={{ fontSize: '12px' }}>Đơn tối thiểu {formatPrice(p.min_booking_value)}</span>
                                                 )}
@@ -339,14 +392,14 @@ const CheckoutPage = () => {
                                 {allPromos.hotels?.filter(h => h.hotel_id === Number(hotelId)).map(p => {
                                     const isDisabled = p.min_booking_value > roomPriceForHotel;
                                     return (
-                                        <div key={p.id} className={`promo-ticket-item hotel-promo ${isDisabled ? 'disabled-promo' : ''}`} style={isDisabled ? { cursor: 'not-allowed' } : {}}>
+                                        <div key={p.id} className={`promo-ticket-item hotel-promo ${isDisabled ? 'disabled-promo' : ''}`} style={isDisabled ? { cursor: 'not-allowed', opacity: 0.6 } : {}}>
                                             <div className="promo-ticket-left">
                                                 <span className="promo-ticket-value">{p.discount_type === 1 ? `${p.discount_value}%` : formatPrice(p.discount_value)}</span>
                                             </div>
                                             <div className="promo-ticket-right">
                                                 <b className="d-block text-dark">{p.code}</b>
                                                 {isDisabled ? (
-                                                    <span className="disabled-reason d-block">Giá sau mã Sàn không đủ {formatPrice(p.min_booking_value)}</span>
+                                                    <span className="disabled-reason d-block text-danger" style={{ fontSize: '12px' }}>Giá sau mã Sàn không đủ {formatPrice(p.min_booking_value)}</span>
                                                 ) : (
                                                     <span className="text-muted d-block" style={{ fontSize: '12px' }}>Đơn tối thiểu {formatPrice(p.min_booking_value)}</span>
                                                 )}
@@ -355,6 +408,10 @@ const CheckoutPage = () => {
                                         </div>
                                     )
                                 })}
+
+                                {(!allPromos.global?.length && !allPromos.hotels?.length) && (
+                                    <div className="text-center text-muted fst-italic mt-3">Hiện không có mã ưu đãi nào đang diễn ra.</div>
+                                )}
                             </div>
                         </div>
                     </div>

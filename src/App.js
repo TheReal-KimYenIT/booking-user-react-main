@@ -21,6 +21,7 @@ import CustomerProfile from './pages/customer/CustomerProfile';
 import OrdersPage from './pages/customer/OrdersPage';
 import MyChatsPage from './pages/customer/MyChatsPage';
 import PromotionsPage from './pages/public/PromotionsPage';
+import VnpayReturn from './pages/customer/VnpayReturn';
 
 // --- IMPORT GLOBAL CSS ---
 import './App.css';
@@ -48,6 +49,8 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/messages" element={<MyChatsPage />} />
             <Route path="/promotions" element={<PromotionsPage />} />
+            <Route path="/payment/vnpay-return" element={<VnpayReturn />} />
+
 
             {/* ====== FALLBACK ROUTE (Chặn đường dẫn sai) ====== */}
             <Route path="*" element={<Navigate to="/" replace />} />

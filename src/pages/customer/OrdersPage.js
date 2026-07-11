@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import customerApi from '../../api/customerApi';
-import { FileText, Star, CheckCircle, MessageSquare } from 'lucide-react';
+import { FileText, Star, CheckCircle, MessageSquare, CreditCard, Banknote } from 'lucide-react';
 import ReviewModal from '../../components/common/ReviewModal';
 import OrderDetailModal from '../../components/common/OrderDetailModal';
 import ReviewDetailModal from '../../components/common/ReviewDetailModal';
@@ -106,10 +106,23 @@ const OrdersPage = () => {
                         {orders.map((order) => (
                             <div key={order.id} className="order-card" style={{ borderLeft: order.status === 3 ? '5px solid #10b981' : order.status === 4 ? '5px solid #94a3b8' : '5px solid #3b82f6' }}>
                                 <div className="order-info">
-                                    <h3 style={{ fontSize: '18px', margin: '0 0 10px 0' }}>Mã đơn: <span style={{ color: order.status === 3 ? '#10b981' : order.status === 4 ? '#64748b' : '#2563eb' }}>{order.booking_code || `#${order.id}`}</span></h3>
+                                    <h3 style={{ fontSize: '18px', margin: '0 0 10px 0' }}>
+                                        Mã đơn: <span style={{ color: order.status === 3 ? '#10b981' : order.status === 4 ? '#64748b' : '#2563eb' }}>{order.booking_code || `#${order.id}`}</span>
+
+                                        {/* 👉 HIỂN THỊ TAG THANH TOÁN */}
+                                        {order.payment_status === 1 ? (
+                                            <span style={{ fontSize: '12px', padding: '4px 8px', borderRadius: '4px', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <CreditCard size={14} /> Đã thanh toán
+                                            </span>
+                                        ) : (
+                                            <span style={{ fontSize: '12px', padding: '4px 8px', borderRadius: '4px', background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <Banknote size={14} /> Trả tại quầy
+                                            </span>
+                                        )}
+                                    </h3>
                                     <p style={{ margin: '5px 0' }}>
                                         <span style={{ fontWeight: 'bold' }}>Loại phòng: </span>
-                                        <span style={{ color: '#047857', fontWeight: 'bold' }}>{order.details?.[0]?.roomType?.name || 'Đang cập nhật...'}</span>
+                                        <span style={{ color: '#047857', fontWeight: 'bold' }}>{order.details?.[0]?.room_type?.name || 'Đang cập nhật...'}</span>
                                     </p>
                                     <p style={{ margin: '5px 0' }}><span style={{ fontWeight: 'bold' }}>Thời gian đặt: </span> {formatDateTime(order.created_at)}</p>
                                     <p style={{ margin: '5px 0' }}><span style={{ fontWeight: 'bold' }}>Nhận phòng:</span> {order.check_in}</p>
