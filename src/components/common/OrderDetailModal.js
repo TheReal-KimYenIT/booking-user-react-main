@@ -1,6 +1,5 @@
 import React from 'react';
-import { X, Ticket, Building2 } from 'lucide-react';
-
+import { X, Ticket, Building2, CheckCircle, Banknote } from 'lucide-react';
 export default function OrderDetailModal({ isOpen, order, onClose }) {
     if (!isOpen || !order) return null;
 
@@ -78,7 +77,21 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                     </h3>
                     <button className="close-btn" onClick={onClose}><X size={24} /></button>
                 </div>
-
+                {/* HIỂN THỊ TRẠNG THÁI HOÀN TIỀN NẾU LÀ ĐƠN ĐÃ HỦY VÀ CÓ YÊU CẦU HOÀN TIỀN */}
+                {order.status === 4 && order.refund_status > 0 && (
+                    <div style={{ background: order.refund_status === 2 ? '#dcfce7' : '#fef3c7', padding: '15px', borderRadius: '8px', margin: '15px', border: `1px solid ${order.refund_status === 2 ? '#86efac' : '#fcd34d'}` }}>
+                        <h4 style={{ margin: '0 0 10px 0', color: order.refund_status === 2 ? '#16a34a' : '#d97706', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {order.refund_status === 2 ? <CheckCircle size={18} /> : <Banknote size={18} />}
+                            {order.refund_status === 2 ? 'Đã hoàn tiền' : 'Đang chờ Admin hoàn tiền'}
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '13px' }}>
+                            <p style={{ margin: 0 }}><strong>Số tiền hoàn:</strong> {formatPrice(order.refund_amount)}</p>
+                            <p style={{ margin: 0 }}><strong>Ngân hàng:</strong> {order.refund_bank}</p>
+                            <p style={{ margin: 0 }}><strong>Số tài khoản:</strong> {order.refund_account}</p>
+                            <p style={{ margin: 0 }}><strong>Tên người nhận:</strong> {order.refund_account_name}</p>
+                        </div>
+                    </div>
+                )}
                 <div className="modal-body">
                     <div className="info-grid">
                         <div>

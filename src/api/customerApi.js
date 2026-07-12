@@ -32,10 +32,7 @@ const customerApi = {
         return axiosClient.get('/customer/my-bookings');
     },
 
-    cancelBooking: (id) => {
-        return axiosClient.post(`/customer/bookings/${id}/cancel`);
-    },
-
+    cancelBooking: (id, data = {}) => axiosClient.post(`/customer/bookings/${id}/cancel`, data),
 
 
 

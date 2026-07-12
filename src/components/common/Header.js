@@ -110,7 +110,7 @@ const Header = () => {
             <div className="offcanvas-menu-wrapper">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                     <Link to="/" onClick={toggleMobileMenu}>
-                        <img src="/img/logo.png" alt="Hiroto" style={{ maxHeight: '35px' }} />
+                        <img src="/img/logo.png" alt="StayHub" style={{ maxHeight: '35px' }} />
                     </Link>
                     <button onClick={toggleMobileMenu} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                         <X size={28} color="#333" />
@@ -171,14 +171,14 @@ const Header = () => {
                 </div>
 
                 {/* THANH MAIN BAR */}
-                <div className="premium-header" style={{ padding: '15px 0' }}>
+                <div className="premium-header" style={{ padding: '5px 0' }}>
                     <div className="container">
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
 
                             {/* Logo */}
                             <div>
                                 <Link to="/">
-                                    <img src="/img/logo.png" alt="Hiroto" style={{ maxHeight: '45px' }} />
+                                    <img src="/img/logo.png" alt="StayHub" style={{ maxHeight: '50px' }} />
                                 </Link>
                             </div>
 

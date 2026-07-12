@@ -51,10 +51,10 @@ const Footer = () => {
 
                         <div className="col-lg-3 col-md-6 mb-4 mb-lg-0">
                             <div className="mb-4">
-                                <Link to="/"><img src="/img/logo.png" alt="Hiroto Logo" style={{ maxHeight: '45px' }} /></Link>
+                                <Link to="/"><img src="/img/logo.png" alt="StayHub Logo" style={{ maxHeight: '45px' }} /></Link>
                             </div>
                             <p style={{ lineHeight: '1.6' }}>
-                                Hiroto là nền tảng đặt phòng khách sạn hàng đầu, mang đến cho bạn trải nghiệm lưu trú tuyệt vời với mức giá tốt nhất.
+                                StayHub là nền tảng đặt phòng khách sạn hàng đầu, mang đến cho bạn trải nghiệm lưu trú tuyệt vời với mức giá tốt nhất.
                             </p>
                             <ul className="footer-list mt-4">
                                 <li className="d-flex align-items-start gap-2">
@@ -73,7 +73,7 @@ const Footer = () => {
                         </div>
 
                         <div className="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                            <h4 className="footer-title">Về Hiroto</h4>
+                            <h4 className="footer-title">Về StayHub</h4>
                             <ul className="footer-list">
                                 <li><Link to="/about" className="footer-link">Giới thiệu về chúng tôi</Link></li>
                                 <li><Link to="/contact" className="footer-link">Tuyển dụng</Link></li>
@@ -120,7 +120,7 @@ const Footer = () => {
                     <div className="row align-items-center pt-4 border-top" style={{ borderColor: 'rgba(255,255,255,0.1) !important' }}>
                         <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
                             <p className="mb-0" style={{ fontSize: '14px' }}>
-                                Copyright &copy; {new Date().getFullYear()} <strong>Hiroto Travel</strong>. Đã đăng ký bản quyền.
+                                Copyright &copy; {new Date().getFullYear()} <strong>StayHub Travel</strong>. Đã đăng ký bản quyền.
                             </p>
                         </div>
                         <div className="col-md-6 text-center text-md-end">

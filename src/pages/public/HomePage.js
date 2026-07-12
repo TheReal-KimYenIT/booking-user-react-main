@@ -111,7 +111,6 @@ export default function HomePage() {
                             <p className="text-muted mb-4">
                                 Dù là chuyến công tác ngắn ngày hay kỳ nghỉ gia đình, chất lượng dịch vụ và sự hài lòng của bạn luôn là kim chỉ nam trong mọi hoạt động của chúng tôi.
                             </p>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Signature_of_John_Hancock.svg" alt="Signature" style={{ width: '150px', opacity: '0.6' }} />
                         </div>
                         <div className="col-lg-6">
                             <div className="position-relative">
