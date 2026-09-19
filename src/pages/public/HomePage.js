@@ -8,7 +8,7 @@ import axiosClient from '../../api/axiosClient';
 import SearchWidget from '../../components/search/SearchWidget';
 import { formatVnd } from '../../utils/booking';
 import Swal from 'sweetalert2';
-import bannerVideo from '../../assets/video/banner.mp4';
+import bannerVideo from './video/baner.mp4';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import '../css/HomePage.css';
 
