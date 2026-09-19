@@ -10,7 +10,7 @@ import { AuthProvider } from './context/AuthContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* 2. BỌC AUTHPROVIDER RA NGOÀI CÙNG */}
+    {/* Bọc toàn bộ app bằng AuthProvider để các trang có thể lấy thông tin người dùng */}
     <AuthProvider>
       <App />
     </AuthProvider>

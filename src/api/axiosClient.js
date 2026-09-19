@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Cấu hình Axios dùng chung cho toàn bộ API của frontend
 const axiosClient = axios.create({
   // Sử dụng biến môi trường, nhớ tạo file .env và thêm: REACT_APP_API_BASE_URL=http://localhost:8000/api
   baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api',
@@ -9,7 +10,7 @@ const axiosClient = axios.create({
   },
 });
 
-// CHIỀU ĐI: Gắn Token
+// Gắn token vào mỗi request đi ra nếu người dùng đã đăng nhập
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('customer_token');
   // Chặn thêm các chuỗi 'null' / 'undefined' rác
@@ -19,7 +20,7 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 }, (error) => Promise.reject(error));
 
-// CHIỀU VỀ: Xử lý lỗi Token hết hạn (BỔ SUNG)
+// Nếu token hết hạn thì tự xóa dữ liệu cũ và đưa người dùng về trang đăng nhập
 axiosClient.interceptors.response.use(
   (response) => {
     return response; // Giữ nguyên để khớp với các file API hiện tại của bạn

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, CreditCard } from 'lucide-react';
 
 const Footer = () => {
+    // Phần chân trang hiển thị thông tin liên hệ và các đường dẫn hỗ trợ
     return (
         <>
             <style>{`
@@ -59,7 +60,7 @@ const Footer = () => {
                             <ul className="footer-list mt-4">
                                 <li className="d-flex align-items-start gap-2">
                                     <MapPin size={18} className="text-warning mt-1 flex-shrink-0" />
-                                    <span>Tòa nhà Landmark 81, Quận Bình Thạnh, TP. Hồ Chí Minh</span>
+                                    <span>180 Cao Lỗ, Chánh Hưng, Hồ Chí Minh, Việt Nam</span>
                                 </li>
                                 <li className="d-flex align-items-center gap-2">
                                     <Phone size={18} className="text-warning flex-shrink-0" />
@@ -67,7 +68,7 @@ const Footer = () => {
                                 </li>
                                 <li className="d-flex align-items-center gap-2">
                                     <Mail size={18} className="text-warning flex-shrink-0" />
-                                    <span>support@hiroto.com</span>
+                                    <span>support@stayhub.com</span>
                                 </li>
                             </ul>
                         </div>

@@ -1,5 +1,6 @@
 import axiosClient from './axiosClient';
 
+// Các hàm gọi API liên quan đến đăng nhập và đăng ký khách hàng
 const authApi = {
     // Đăng nhập cho Khách hàng
     login: (data) => {

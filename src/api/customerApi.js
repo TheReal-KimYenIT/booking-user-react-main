@@ -1,5 +1,6 @@
 import axiosClient from './axiosClient';
 
+// Tập hợp các API dành cho khách hàng sau khi đăng nhập
 const customerApi = {
     // --- QUẢN LÝ HỒ SƠ ---
     getProfile: () => {
@@ -50,7 +51,7 @@ const customerApi = {
     getChatMessages: (bookingId) => {
         return axiosClient.get(`/customer/bookings/${bookingId}/chat`);
     },
-    // 👉 THÊM MỚI: Lấy lịch sử chat vãng lai theo hotelId
+    // Lấy lịch sử chat vãng lai theo hotelId
     getPreBookingChatMessages: (hotelId) => {
         return axiosClient.get(`/customer/hotels/${hotelId}/chat`);
     },
@@ -59,7 +60,7 @@ const customerApi = {
         return axiosClient.post(`/customer/chat/${threadId}/messages`, data);
     },
 
-    // 👉 THÊM MỚI: Lấy danh sách tất cả các cuộc trò chuyện
+    //  Lấy danh sách tất cả các cuộc trò chuyện
     getAllChats: () => {
         return axiosClient.get('/customer/chats');
     },

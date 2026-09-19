@@ -21,9 +21,9 @@ const CheckoutPage = () => {
     const [availableServices, setAvailableServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [paymentMethod, setPaymentMethod] = useState('hotel');
+    const [paymentMethod, setPaymentMethod] = useState('vnpay');
 
-    const [contactName, setContactName] = useState(user?.name || '');
+    const [contactName, setContactName] = useState(user ? `${user.last_name || ''} ${user.first_name || ''}`.trim() : '');
     const [contactEmail, setContactEmail] = useState(user?.email || '');
     const [contactPhone, setContactPhone] = useState(user?.phone || '');
     const [isBookingForSelf, setIsBookingForSelf] = useState(true);
@@ -37,23 +37,39 @@ const CheckoutPage = () => {
     const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
     const [allPromos, setAllPromos] = useState({ global: [], hotels: [] });
 
-    // 👉 THÊM BIẾN LƯU % VAT
+    // Biến lưu % VAT từ hệ thống
     const [systemVatRate, setSystemVatRate] = useState(10);
 
     const checkInDate = searchParams.get('checkIn') || todayISODate();
     const checkOutDate = searchParams.get('checkOut') || addDaysISODate(todayISODate(), 1);
     const urlRooms = Number(searchParams.get('rooms')) || 1;
 
-    useEffect(() => { window.scrollTo(0, 0); }, []);
-    useEffect(() => { if (user) { setContactName(user.name || ''); setContactEmail(user.email || ''); setContactPhone(user.phone || ''); } }, [user]);
+    useEffect(() => { 
+        window.scrollTo(0, 0); 
+        const handlePageShow = (e) => {
+            if (e.persisted) {
+                Swal.close();
+            }
+        };
+        window.addEventListener('pageshow', handlePageShow);
+        return () => window.removeEventListener('pageshow', handlePageShow);
+    }, []);
+
+    useEffect(() => { 
+        if (user) { 
+            setContactName(`${user.last_name || ''} ${user.first_name || ''}`.trim()); 
+            setContactEmail(user.email || ''); 
+            setContactPhone(user.phone || ''); 
+        } 
+    }, [user]);
 
     useEffect(() => {
         const fetchData = async () => {
             if (!hotelId || !roomId) { setLoading(false); return; }
             try {
-                // Tải thêm Cấu hình hệ thống để lấy % VAT
+                // Tải thông tin khách sạn kèm ngày nhận/trả phòng và số phòng để lấy giá động chính xác
                 const [hotelRes, servicesRes, promosRes, settingsRes] = await Promise.all([
-                    axiosClient.get(`/hotels/${hotelId}`),
+                    axiosClient.get(`/hotels/${hotelId}?checkIn=${checkInDate}&checkOut=${checkOutDate}&rooms=${urlRooms}`),
                     axiosClient.get(`/hotels/${hotelId}/services`),
                     axiosClient.get('/promotions/active'),
                     axiosClient.get('/system-settings') // Lấy VAT hiện tại
@@ -77,12 +93,13 @@ const CheckoutPage = () => {
             } catch (err) { console.error(err); } finally { setLoading(false); }
         };
         fetchData();
-    }, [hotelId, roomId]);
+    }, [hotelId, roomId, checkInDate, checkOutDate, urlRooms]);
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
     const nights = Math.max(1, Math.round((new Date(checkOutDate) - new Date(checkInDate)) / 86400000));
-    const roomPrice = room ? Number(room.base_price) * nights * urlRooms : 0;
+    const unitDailyPrice = room ? (room.daily_price || room.base_price) : 0;
+    const roomPrice = room ? (room.stay_total ? Number(room.stay_total) * urlRooms : Number(unitDailyPrice) * nights * urlRooms) : 0;
     const servicesTotalCost = selectedServices.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
 
     const roomPriceForGlobal = roomPrice;
@@ -92,7 +109,7 @@ const CheckoutPage = () => {
     const discountHotel = hotelPromo ? Number(hotelPromo.discount_amount) : 0;
     const totalDiscountAmount = discountGlobal + discountHotel;
 
-    // 👉 TÍNH TOÁN VAT THEO CÔNG THỨC MỚI: (Phòng + Dịch vụ - Khuyến mãi) * VAT %
+    // Tính toán VAT theo công thức: (Phòng + Dịch vụ - Khuyến mãi) * VAT %
     const taxableAmount = Math.max(0, roomPrice + servicesTotalCost - totalDiscountAmount);
     const taxes = taxableAmount * (systemVatRate / 100);
 
@@ -163,6 +180,7 @@ const CheckoutPage = () => {
                         return;
                     }
                     const paymentRes = await customerApi.createVnpayPayment({ booking_id: newBookingId });
+                    Swal.close();
                     window.location.href = paymentRes.data.payment_url;
                 } else {
                     Swal.fire({ icon: 'success', title: 'Tuyệt vời!', text: 'Mã đơn của bạn là: ' + response.data.booking_code, allowOutsideClick: false }).then(() => navigate('/customer/my-bookings'));
@@ -248,11 +266,6 @@ const CheckoutPage = () => {
                                     <CreditCard size={22} color="#dfa974" /> Phương thức thanh toán
                                 </h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '10px', border: paymentMethod === 'hotel' ? '2px solid #3b82f6' : '1px solid #e2e8f0', borderRadius: '8px', background: paymentMethod === 'hotel' ? '#eff6ff' : '#fff' }}>
-                                        <input type="radio" name="payment" value="hotel" checked={paymentMethod === 'hotel'} onChange={() => setPaymentMethod('hotel')} style={{ width: '18px', height: '18px' }} />
-                                        <span style={{ fontWeight: 'bold', color: '#1e293b' }}>Thanh toán trực tiếp tại khách sạn</span>
-                                    </label>
-
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '10px', border: paymentMethod === 'vnpay' ? '2px solid #3b82f6' : '1px solid #e2e8f0', borderRadius: '8px', background: paymentMethod === 'vnpay' ? '#eff6ff' : '#fff' }}>
                                         <input type="radio" name="payment" value="vnpay" checked={paymentMethod === 'vnpay'} onChange={() => setPaymentMethod('vnpay')} style={{ width: '18px', height: '18px' }} />
                                         <img src="https://vnpay.vn/wp-content/uploads/2020/07/Logo-VNPAYQR-update.png" alt="VNPAY" style={{ height: '24px' }} />
@@ -304,7 +317,7 @@ const CheckoutPage = () => {
                                     <div key={srv.id} className="price-row text-primary"><span>+ {srv.name} (x{srv.quantity})</span><span>{formatPrice(srv.price * srv.quantity)}</span></div>
                                 ))}
 
-                                {/* 👉 HIỂN THỊ ĐỘNG % VAT */}
+                                {/* Hiển thị % VAT */}
                                 <div className="price-row"><span>Thuế ({systemVatRate}%)</span><span className="fw-bold text-dark">{formatPrice(taxes)}</span></div>
 
                                 <div style={{ marginTop: '20px', borderTop: '1px dashed #e2e8f0', paddingTop: '20px' }}>
@@ -341,7 +354,17 @@ const CheckoutPage = () => {
                                     <span style={{ color: '#1e293b', fontSize: '18px' }}>Tổng cộng</span>
                                     <div style={{ textAlign: 'right' }}>
                                         {totalDiscountAmount > 0 && <div className="old-price-strike">{formatPrice(roomPrice + taxes + servicesTotalCost)}</div>}
-                                        <span style={{ color: '#e11d48', fontSize: '24px', display: 'block' }}>{formatPrice(totalPrice)}</span>
+                                        <span style={{ color: '#1e293b', fontSize: '20px', display: 'block', fontWeight: 'bold' }}>{formatPrice(totalPrice)}</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="price-total" style={{ marginTop: '15px', alignItems: 'flex-end', paddingTop: '15px', borderTop: '1px dashed #cbd5e1' }}>
+                                    <div>
+                                        <span style={{ color: '#e11d48', fontSize: '18px', fontWeight: 'bold', display: 'block' }}>Tiền cọc cần thanh toán</span>
+                                        <span style={{ color: '#64748b', fontSize: '14px' }}>Bắt buộc cọc 50% để giữ phòng</span>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <span style={{ color: '#e11d48', fontSize: '26px', display: 'block', fontWeight: 'bold' }}>{formatPrice(totalPrice / 2)}</span>
                                     </div>
                                 </div>
                                 <button onClick={handleSubmit} className="primary-btn border-0 w-100 mt-3" style={{ padding: '14px', borderRadius: '8px' }}>
@@ -369,7 +392,8 @@ const CheckoutPage = () => {
                             <div className="promo-list mt-4">
                                 {allPromos.global?.length > 0 && <div className="promo-group-title">Mã từ Sàn Hiroto</div>}
                                 {allPromos.global?.map(p => {
-                                    const isDisabled = p.min_booking_value > roomPriceForGlobal;
+                                    const isExhausted = p.is_exhausted === true;
+                                    const isDisabled = p.min_booking_value > roomPriceForGlobal || isExhausted;
                                     return (
                                         <div key={p.id} className={`promo-ticket-item ${isDisabled ? 'disabled-promo' : ''}`} style={isDisabled ? { cursor: 'not-allowed', opacity: 0.6 } : {}}>
                                             <div className="promo-ticket-left">
@@ -377,7 +401,9 @@ const CheckoutPage = () => {
                                             </div>
                                             <div className="promo-ticket-right">
                                                 <b className="d-block text-dark">{p.code}</b>
-                                                {isDisabled ? (
+                                                {isExhausted ? (
+                                                    <span className="disabled-reason d-block text-danger" style={{ fontSize: '12px' }}>Đã dùng hết lượt</span>
+                                                ) : isDisabled ? (
                                                     <span className="disabled-reason d-block text-danger" style={{ fontSize: '12px' }}>Cần thêm {formatPrice(p.min_booking_value - roomPriceForGlobal)} để dùng</span>
                                                 ) : (
                                                     <span className="text-muted d-block" style={{ fontSize: '12px' }}>Đơn tối thiểu {formatPrice(p.min_booking_value)}</span>
@@ -390,7 +416,8 @@ const CheckoutPage = () => {
 
                                 {allPromos.hotels?.length > 0 && <div className="promo-group-title mt-4">Mã từ Khách sạn này</div>}
                                 {allPromos.hotels?.filter(h => h.hotel_id === Number(hotelId)).map(p => {
-                                    const isDisabled = p.min_booking_value > roomPriceForHotel;
+                                    const isExhausted = p.is_exhausted === true;
+                                    const isDisabled = p.min_booking_value > roomPriceForHotel || isExhausted;
                                     return (
                                         <div key={p.id} className={`promo-ticket-item hotel-promo ${isDisabled ? 'disabled-promo' : ''}`} style={isDisabled ? { cursor: 'not-allowed', opacity: 0.6 } : {}}>
                                             <div className="promo-ticket-left">
@@ -398,7 +425,9 @@ const CheckoutPage = () => {
                                             </div>
                                             <div className="promo-ticket-right">
                                                 <b className="d-block text-dark">{p.code}</b>
-                                                {isDisabled ? (
+                                                {isExhausted ? (
+                                                    <span className="disabled-reason d-block text-danger" style={{ fontSize: '12px' }}>Đã dùng hết lượt</span>
+                                                ) : isDisabled ? (
                                                     <span className="disabled-reason d-block text-danger" style={{ fontSize: '12px' }}>Giá sau mã Sàn không đủ {formatPrice(p.min_booking_value)}</span>
                                                 ) : (
                                                     <span className="text-muted d-block" style={{ fontSize: '12px' }}>Đơn tối thiểu {formatPrice(p.min_booking_value)}</span>

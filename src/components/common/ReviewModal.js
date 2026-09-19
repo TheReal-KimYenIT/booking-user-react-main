@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Star, X, ImagePlus, Loader2 } from 'lucide-react';
 import axiosClient from '../../api/axiosClient';
 
-// Không cần import CSS ở đây vì nó sẽ thừa hưởng từ OrdersPage.css 
-// (đã chứa các class custom-modal-overlay, v.v.)
 
 export default function ReviewModal({ isOpen, onClose, bookingId, hotelId, customerId, onSuccess }) {
+    // Form gửi đánh giá sau khi khách đã trả phòng
     const [rating, setRating] = useState(5);
     const [hoverRating, setHoverRating] = useState(0);
     const [comment, setComment] = useState('');
@@ -78,7 +77,6 @@ export default function ReviewModal({ isOpen, onClose, bookingId, hotelId, custo
     };
 
     return (
-        // 👉 ĐÃ SỬA: Dùng đúng cấu trúc HTML của Popup Chi Tiết để đồng bộ UI
         <div className="custom-modal-overlay" onClick={onClose}>
             <div className="custom-modal-content" style={{ maxWidth: '600px' }} onClick={e => e.stopPropagation()}>
 

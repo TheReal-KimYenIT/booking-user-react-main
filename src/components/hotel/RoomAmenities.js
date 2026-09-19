@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle2, Wind, Bath, Tv, Coffee } from 'lucide-react';
 
 export default function RoomAmenities({ amenities }) {
-    // Hàm render icon tiện ích linh hoạt
+    // Hiển thị các tiện nghi của phòng bằng icon phù hợp
     const renderAmenityIcon = (name) => {
         const lowerName = name.toLowerCase();
         if (lowerName.includes('lạnh')) return <Wind size={32} color="#dfa974" />;

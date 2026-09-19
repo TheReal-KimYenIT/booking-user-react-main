@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, XCircle } from 'lucide-react';
 import axiosClient from '../../api/axiosClient';
 
 const VnpayReturn = () => {
+    // Trang xác nhận kết quả thanh toán VNPAY quay về từ cổng thanh toán
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [status, setStatus] = useState('loading');
@@ -18,7 +19,7 @@ const VnpayReturn = () => {
 
             if (responseCode === '00' && transactionStatus === '00') {
                 try {
-                    // 👉 CHUẨN HÓA: Gửi đúng chuỗi URLSearchParams lên Backend
+                    // Gửi đúng chuỗi URLSearchParams lên Backend
                     await axiosClient.get(`/payment/vnpay-ipn?${searchParams.toString()}`);
                     setStatus('success');
                 } catch (error) {
@@ -26,7 +27,7 @@ const VnpayReturn = () => {
                     setStatus('success');
                 }
 
-                // 👉 ĐÃ SỬA: Chuyển hướng đúng path '/orders'
+                // Chuyển hướng đúng path '/orders'
                 intervalId = setInterval(() => {
                     setCountdown((prev) => {
                         if (prev <= 1) {
@@ -67,7 +68,7 @@ const VnpayReturn = () => {
 
                 {status === 'loading' && (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-                        <Loader2 size={48} className="spin-animation" color="#3b82f6" />
+                        <div className="spinner-border" style={{ color: '#dfa974' }} role="status"></div>
                         <h3 className="fw-bold text-secondary m-0">Đang đồng bộ giao dịch...</h3>
                         <p className="text-muted">Vui lòng không đóng trình duyệt lúc này.</p>
                     </div>
@@ -87,7 +88,7 @@ const VnpayReturn = () => {
                             </p>
                         </div>
 
-                        {/* 👉 ĐÃ SỬA: Chuyển hướng đúng path '/orders' */}
+                        {/*  Chuyển hướng đúng path '/orders' */}
                         <button onClick={() => navigate('/orders')} className="btn btn-primary fw-bold w-100 py-2" style={{ borderRadius: '8px' }}>
                             Chuyển hướng ngay bây giờ
                         </button>
@@ -117,8 +118,6 @@ const VnpayReturn = () => {
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-                @keyframes spin { 100% { transform: rotate(360deg); } }
-                .spin-animation { animation: spin 1.5s linear infinite; }
                 @keyframes fadeInUp {
                     from { opacity: 0; transform: translateY(20px); }
                     to { opacity: 1; transform: translateY(0); }

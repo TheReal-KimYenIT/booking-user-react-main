@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { LogOut, UserCircle, ClipboardList, Star, User, Menu, X, Building, MessageSquare } from 'lucide-react';
+import { LogOut, UserCircle, ClipboardList, User, Menu, X, Building, MessageSquare, ChevronDown } from 'lucide-react';
 
 const Header = () => {
+    // Thanh điều hướng chính của website, gồm menu, logo và khu vực tài khoản
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useContext(AuthContext);
@@ -120,11 +121,10 @@ const Header = () => {
                 <div className="offcanvas__widget">
                     <ul>
                         <li><Link to="/" onClick={toggleMobileMenu}>Trang chủ</Link></li>
-                        <li><Link to="/hotels" onClick={toggleMobileMenu}>Khách sạn</Link></li>
+                        {/* //<li><Link to="/hotels" onClick={toggleMobileMenu}>Khách sạn</Link></li> */}
                         <li><Link to="/promotions" onClick={toggleMobileMenu}>Khuyến mãi</Link></li>
                         <li><Link to="/about" onClick={toggleMobileMenu}>Về chúng tôi</Link></li>
-                        {/* 👉 SỬA Ở ĐÂY: Thay vì Link, dùng thẻ a để nhảy tới id */}
-                        <li><a href="/about#contact-section" onClick={toggleMobileMenu}>Liên hệ</a></li>
+                        <li><Link to="/contact" onClick={toggleMobileMenu}>Liên hệ</Link></li>
                     </ul>
                 </div>
 
@@ -132,12 +132,11 @@ const Header = () => {
                     {user ? (
                         <ul style={{ listStyle: 'none', padding: 0 }}>
                             <li style={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <UserCircle size={20} color="#3b82f6" /> Xin chào, {user.name}
+                                <UserCircle size={20} color="#3b82f6" /> Xin chào, {user.last_name} {user.first_name}
                             </li>
                             <li style={{ marginBottom: '10px' }}><Link to="/profile" onClick={toggleMobileMenu} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}><User size={16} /> Hồ sơ cá nhân</Link></li>
                             <li style={{ marginBottom: '10px' }}><Link to="/messages" onClick={toggleMobileMenu} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}><MessageSquare size={16} /> Tin nhắn của tôi</Link></li>
                             <li style={{ marginBottom: '10px' }}><Link to="/orders" onClick={toggleMobileMenu} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}><ClipboardList size={16} /> Lịch sử đặt phòng</Link></li>
-                            <li style={{ marginBottom: '10px' }}><Link to="/reviews" onClick={toggleMobileMenu} style={{ textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '8px' }}><Star size={16} /> Đánh giá của tôi</Link></li>
                             <li><a href="/" onClick={handleLogout} style={{ textDecoration: 'none', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}><LogOut size={16} /> Đăng xuất</a></li>
                         </ul>
                     ) : (
@@ -152,6 +151,8 @@ const Header = () => {
             {/* ========================================== */}
             {/* DESKTOP HEADER */}
             {/* ========================================== */}
+            {/* Spacer để chống giật layout khi header chuyển sang fixed */}
+            {isSticky && <div style={{ height: '96px' }} className="d-none d-lg-block"></div>}
             <header className={`header ${isSticky ? 'header--sticky' : ''}`}>
 
                 {/* THANH TOP BAR */}
@@ -163,7 +164,7 @@ const Header = () => {
                             </div>
                             <div>
                                 <a href="http://localhost:4200/login" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: '#212529', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <Building size={14} /> Hợp tác với chúng tôi (Dành cho Chủ khách sạn)
+                                    <Building size={14} /> Hợp tác với chúng tôi
                                 </a>
                             </div>
                         </div>
@@ -186,12 +187,10 @@ const Header = () => {
                             <nav className="d-none d-lg-block">
                                 <ul className="main-menu" style={{ display: 'flex', gap: '35px', margin: 0, padding: 0, listStyle: 'none' }}>
                                     <li className={checkActive('/')}><Link to="/">Trang chủ</Link></li>
-                                    <li className={checkActive('/hotels')}><Link to="/hotels">Khách sạn</Link></li>
+                                    {/* // <li className={checkActive('/hotels')}><Link to="/hotels">Khách sạn</Link></li> */}
                                     <li className={checkActive('/promotions')}><Link to="/promotions">Khuyến mãi</Link></li>
                                     <li className={checkActive('/about')}><Link to="/about">Về chúng tôi</Link></li>
-
-                                    {/* 👉 SỬA Ở ĐÂY: Dùng thẻ a thuần để anchor id hoạt động */}
-                                    <li><a href="/about#contact-section">Liên hệ</a></li>
+                                    <li className={checkActive('/contact')}><Link to="/contact">Liên hệ</Link></li>
                                 </ul>
                             </nav>
 
@@ -209,7 +208,8 @@ const Header = () => {
                                         <div className="account-dropdown" style={{ position: 'relative', cursor: 'pointer', padding: '10px 0' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontWeight: 'bold' }}>
                                                 <UserCircle size={24} color="#fbbf24" />
-                                                <span>{user.name}</span>
+                                                <span>{user.last_name} {user.first_name}</span>
+                                                <ChevronDown size={16} color="#cbd5e1" />
                                             </div>
 
                                             <ul className="auth-dropdown-menu" style={{
@@ -220,7 +220,6 @@ const Header = () => {
                                                 <li><Link to="/profile" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px' }}><User size={16} /> Hồ sơ cá nhân</Link></li>
                                                 <li><Link to="/messages" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px' }}><MessageSquare size={16} /> Tin nhắn của tôi</Link></li>
                                                 <li><Link to="/orders" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px' }}><ClipboardList size={16} /> Lịch sử đặt phòng</Link></li>
-                                                <li><Link to="/reviews" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px' }}><Star size={16} /> Đánh giá của tôi</Link></li>
                                                 <li style={{ borderTop: '1px solid #eee', marginTop: '5px' }}>
                                                     <a href="/" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px', color: '#ef4444' }}><LogOut size={16} /> Đăng xuất</a>
                                                 </li>

@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
+// Khóa lưu dữ liệu đơn đặt phòng ở localStorage để dùng lại sau khi reload
 const STORAGE_KEY = 'booking_user_orders_v1';
 
 function loadOrders() {
@@ -19,9 +20,11 @@ function saveOrders(orders) {
 
 const BookingContext = createContext(null);
 
+// Provider dùng để quản lý đơn đặt phòng tạm thời cho các component con
 export function BookingProvider({ children }) {
   const [orders, setOrders] = useState(() => loadOrders());
 
+  // Thêm một đơn mới vào danh sách và lưu luôn vào localStorage
   const addOrder = useCallback((order) => {
     setOrders((prev) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;

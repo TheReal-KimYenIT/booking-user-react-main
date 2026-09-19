@@ -1,32 +1,1334 @@
-/* =========================================
-   HOMEPAGE CSS (ĐÃ DỌN DẸP SẠCH SẼ)
-========================================= */
+/* ===================================================
+   STAYHUB HOMEPAGE LUXURY REDESIGN STYLES
+   Modern, Sleek, Glassmorphism & High-Conversion UI
+   =================================================== */
 
-/* Hiệu ứng hover cho thẻ Điểm đến (Destinations) */
-.destination-card {
-    transition: all 0.4s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* ---------------------------------------------------
+   1. HERO BANNER & SEARCH WIDGET
+--------------------------------------------------- */
+.home-hero-section {
+    position: relative;
+    min-height: 86vh;
+    background-color: #0b1120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 90px 20px 130px 20px;
+    overflow: visible;
 }
 
-.destination-card:hover {
+.home-hero-video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.home-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(11, 17, 32, 0.42) 0%, rgba(11, 17, 32, 0.65) 55%, #0b1120 100%);
+    z-index: 1;
+}
+
+.home-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1260px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    color: #fef08a;
+    padding: 7px 22px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hero-main-title {
+    font-size: clamp(2.3rem, 4.3vw, 3.7rem);
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.hero-title-white {
+    color: #ffffff;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+    display: inline-block;
+}
+
+.text-gradient-gold {
+    background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #ea580c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    text-shadow: none !important;
+    filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.35));
+}
+
+.hero-sub-title {
+    font-size: clamp(14.5px, 1.7vw, 16.5px);
+    color: #e2e8f0;
+    max-width: 760px;
+    margin: 0 auto 32px auto;
+    line-height: 1.6;
+    font-weight: 400;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* SEARCH WIDGET CARD (variant="home") */
+.home-search-widget-wrapper {
+    position: relative;
+    max-width: 1220px;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 10;
+}
+
+.home-search-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 8px 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.home-search-card:focus-within {
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35), 0 0 0 2px #f59e0b;
+}
+
+.home-search-fields-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1.05fr 1.35fr 1.15fr auto;
+    align-items: center;
+    gap: 6px;
+}
+
+.home-search-col {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border-right: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+    min-width: 0;
+}
+
+.home-search-col:hover {
+    background-color: #f8fafc;
+}
+
+.home-field-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bg-amber-soft { background: #fef3c7; }
+.bg-blue-soft { background: #dbeafe; }
+.bg-emerald-soft { background: #d1fae5; }
+.bg-purple-soft { background: #ede9fe; }
+
+.home-field-info {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+
+.home-field-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.6px;
+    margin-bottom: 2px;
+    display: block;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.home-field-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0f172a;
+    padding: 2px 0;
+}
+
+.home-field-input::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.home-nights-chip {
+    font-size: 11px;
+    font-weight: 700;
+    background: #ecfdf5;
+    color: #059669;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.home-dates-inputs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.home-date-val {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+    width: 110px;
+}
+
+.home-date-val::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.2s;
+}
+
+.home-date-val::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.home-date-arrow {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.home-guest-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 2px 0;
+}
+
+.home-guest-text {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.home-guest-dropdown {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 0;
+    width: 320px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid #e2e8f0;
+    z-index: 99999;
+    animation: fadeInDown 0.2s ease-out;
+}
+
+.btn-apply-guest-count {
+    width: 100%;
+    margin-top: 15px;
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-apply-guest-count:hover {
+    background: #1e293b;
+}
+
+/* Nút Submit Tìm Phòng */
+.home-search-btn-wrap {
+    padding-left: 4px;
+}
+
+.home-btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 14px 26px;
+    border-radius: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.home-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5);
+    background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%);
+}
+
+.home-search-error-badge {
+    margin-top: 14px;
+    display: inline-block;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+/* Trending tags under search box */
+.home-trending-tags {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.home-trending-label {
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.home-trending-btn {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.home-trending-btn:hover {
+    background: #ffffff;
+    color: #0f172a;
+    border-color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------
+   2. FLOATING TRUST BAR (4 CAM KẾT VÀNG)
+--------------------------------------------------- */
+.home-trust-bar-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: -50px auto 0 auto;
+    z-index: 8;
+    padding: 0 20px;
+}
+
+.home-trust-bar {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px 30px;
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.09);
+    border: 1px solid #f1f5f9;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.trust-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.trust-text h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 3px 0;
+}
+
+.trust-text p {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ---------------------------------------------------
+   3. FLASH DEALS & VOUCHERS SECTION
+--------------------------------------------------- */
+.home-deals-section {
+    padding: 80px 20px;
+    background-color: #f8fafc;
+}
+
+.section-header-block {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 45px auto;
+}
+
+.section-pill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #d97706;
+    background: #fef3c7;
+    padding: 6px 14px;
+    border-radius: 30px;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: clamp(26px, 3vw, 34px);
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+}
+
+.section-desc {
+    font-size: 15px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.deals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.voucher-ticket-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.voucher-ticket-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+}
+
+.voucher-badge-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    padding: 3px 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+.voucher-card-top {
+    padding: 24px 20px 18px 20px;
+}
+
+.voucher-discount-val {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.voucher-discount-val span {
+    color: #d97706;
+}
+
+.voucher-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.voucher-desc {
+    font-size: 12.5px;
+    color: #64748b;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Đường cắt vé (Ticket cutout) */
+.ticket-divider-line {
+    position: relative;
+    border-top: 2px dashed #e2e8f0;
+    margin: 4px 0;
+}
+
+.ticket-divider-line::before,
+.ticket-divider-line::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.ticket-divider-line::before { left: -9px; }
+.ticket-divider-line::after { right: -9px; }
+
+.voucher-card-bottom {
+    padding: 16px 20px 20px 20px;
+    margin-top: auto;
+    background: #fafbfc;
+    border-radius: 0 0 16px 16px;
+}
+
+.voucher-code-copy-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.voucher-code-text {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 1px;
+}
+
+.btn-copy-code {
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-copy-code:hover {
+    color: #1d4ed8;
+}
+
+.btn-use-voucher {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 0;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-use-voucher:hover {
+    background: #1e293b;
+    color: #ffffff;
+}
+
+/* ---------------------------------------------------
+   4. BENTO-GRID POPULAR DESTINATIONS
+--------------------------------------------------- */
+.home-destinations-section {
+    padding: 80px 20px;
+    background-color: #ffffff;
+}
+
+.destinations-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: 240px;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.bento-card-large {
+    grid-column: span 6;
+    grid-row: span 2;
+}
+
+.bento-card-medium {
+    grid-column: span 3;
+    grid-row: span 1;
+}
+
+.bento-dest-card {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.bento-dest-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.bento-dest-card:hover .bento-dest-img {
+    transform: scale(1.08);
+}
+
+.bento-dest-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.82) 100%);
+    transition: opacity 0.3s;
+}
+
+.bento-dest-card:hover .bento-dest-gradient {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.88) 100%);
+}
+
+.bento-dest-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 2;
+}
+
+.dest-name-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.2px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.bento-card-large .dest-name-title {
+    font-size: 28px;
+}
+
+.dest-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.dest-explore-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.bento-dest-card:hover .dest-explore-btn {
+    background: #f59e0b;
+    color: #ffffff;
+    transform: rotate(45deg);
+}
+
+/* ---------------------------------------------------
+   5. FEATURED HOTELS SECTION
+--------------------------------------------------- */
+.home-hotels-section {
+    padding: 80px 20px;
+    background-color: #f8fafc;
+}
+
+.hotels-category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.hotel-tab-btn {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.hotel-tab-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.hotel-tab-btn.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+.hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hotel-card-v3 {
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.hotel-card-v3:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    border-color: #cbd5e1;
 }
 
-/* Hiệu ứng hover cho thẻ Khách sạn (Hotel Card) */
-.hotel-card-custom {
-    transition: all 0.4s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+.hotel-img-frame {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
 }
 
-.hotel-card-custom:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+.hotel-main-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Fix lỗi padding mỏng của nút Xem tất cả */
-.btn-xem-tat-ca {
-    padding: 12px 40px;
+.hotel-card-v3:hover .hotel-main-img {
+    transform: scale(1.08);
+}
+
+.hotel-type-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    z-index: 2;
+}
+
+.hotel-star-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    color: #b45309;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    z-index: 2;
+}
+
+.hotel-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.hotel-rating-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.hotel-stars-group {
+    display: flex;
+    gap: 2px;
+}
+
+.hotel-score-pill {
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.hotel-name-h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.4;
+    margin: 0 0 6px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 48px;
+}
+
+.hotel-loc-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 14px;
+}
+
+.hotel-amenities-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    min-height: 24px;
+}
+
+.amenity-pill-sm {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.hotel-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.hotel-price-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.hotel-price-num {
+    font-size: 19px;
+    font-weight: 900;
+    color: #ea580c;
+    line-height: 1;
+}
+
+.hotel-price-unit {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: normal;
+}
+
+.btn-hotel-detail-mini {
+    background: #0f172a;
+    color: #dfa974;
+    border: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.hotel-card-v3:hover .btn-hotel-detail-mini {
+    background: #dfa974;
+    color: #0f172a;
+}
+
+.btn-view-all-hotels {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #0f172a;
+    color: #dfa974;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 36px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+    transition: all 0.25s ease;
+}
+
+.btn-view-all-hotels:hover {
+    background: #1e293b;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.25);
+}
+
+/* ---------------------------------------------------
+   6. WHY CHOOSE STAYHUB (GIÁ TRỊ CỐT LÕI)
+--------------------------------------------------- */
+.home-why-section {
+    padding: 85px 20px;
+    background-color: #ffffff;
+}
+
+.why-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.why-feature-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 32px 24px;
+    text-align: left;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.why-feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    border-color: #f59e0b;
+}
+
+.why-icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.why-feature-card h3 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+}
+
+.why-feature-card p {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ---------------------------------------------------
+   7. TESTIMONIALS (ĐÁNH GIÁ THỰC TẾ)
+--------------------------------------------------- */
+.home-testimonials-section {
+    padding: 80px 20px;
+    background-color: #f8fafc;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.testi-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.testi-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+}
+
+.testi-stars-row {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 14px;
+}
+
+.testi-comment-text {
+    font-size: 14.5px;
+    color: #334155;
+    line-height: 1.65;
+    font-style: italic;
+    margin: 0 0 20px 0;
+    flex: 1;
+}
+
+.testi-author-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 16px;
+}
+
+.testi-avatar-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0f172a;
+    color: #dfa974;
+    font-weight: 800;
     font-size: 16px;
-    border-width: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.testi-author-meta h5 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 2px 0;
+}
+
+.testi-author-meta span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* ---------------------------------------------------
+   8. NEWSLETTER BANNER (NHẬN ƯU ĐÃI)
+--------------------------------------------------- */
+.home-newsletter-section {
+    padding: 40px 20px 90px 20px;
+    background-color: #f8fafc;
+}
+
+.newsletter-luxury-card {
+    position: relative;
+    max-width: 1140px;
+    margin: 0 auto;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 60px 40px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+    text-align: center;
+}
+
+.newsletter-deco-circle {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+    pointer-events: none;
+}
+
+.newsletter-content {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+.newsletter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 6px 16px;
+    border-radius: 30px;
+    margin-bottom: 14px;
+}
+
+.newsletter-title {
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.newsletter-desc {
+    font-size: 15px;
+    color: #cbd5e1;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.newsletter-form-row {
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.newsletter-input {
+    flex: 1;
+    background: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 14.5px;
+    color: #0f172a;
+    outline: none;
+}
+
+.newsletter-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14.5px;
+    border: none;
+    border-radius: 12px;
+    padding: 0 24px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.newsletter-btn:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%);
+    transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------
+   9. RESPONSIVE BREAKPOINTS
+--------------------------------------------------- */
+@media (max-width: 1100px) {
+    .home-search-fields-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .home-search-col {
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .home-search-btn-wrap {
+        grid-column: span 2;
+        padding-left: 0;
+        margin-top: 8px;
+    }
+
+    .home-btn-submit {
+        width: 100%;
+    }
+
+    .home-trust-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .deals-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hotels-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .why-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .destinations-bento-grid {
+        grid-auto-rows: 200px;
+    }
+
+    .bento-card-large {
+        grid-column: span 12;
+        grid-row: span 2;
+    }
+
+    .bento-card-medium {
+        grid-column: span 6;
+        grid-row: span 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .home-hero-section {
+        padding: 60px 15px 110px 15px;
+    }
+
+    .home-search-fields-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-search-btn-wrap {
+        grid-column: span 1;
+    }
+
+    .home-trust-bar {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .deals-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hotels-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .why-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .destinations-bento-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 220px;
+    }
+
+    .bento-card-large,
+    .bento-card-medium {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .newsletter-form-row {
+        flex-direction: column;
+    }
+
+    .newsletter-btn {
+        padding: 14px;
+    }
 }

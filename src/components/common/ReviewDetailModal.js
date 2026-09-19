@@ -1,10 +1,12 @@
 import React from 'react';
 import { Star, X, MessageCircle, Calendar, Building } from 'lucide-react';
+import { getBackendHost } from '../../utils/imageUrl';
 
 export default function ReviewDetailModal({ isOpen, review, order, onClose }) {
+    // Modal xem chi tiết đánh giá và phản hồi từ khách sạn
     if (!isOpen || !review || !order) return null;
 
-    const BACKEND_URL = 'http://localhost:8000';
+    const BACKEND_URL = getBackendHost();
 
     // Hàm format ngày giờ chuẩn VN (VD: 14:30 - 25/10/2026)
     const formatDateTime = (dateString) => {

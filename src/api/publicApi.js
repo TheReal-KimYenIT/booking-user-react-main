@@ -1,5 +1,6 @@
 import axiosClient from './axiosClient';
 
+// Các API không cần đăng nhập, dùng cho trang khách và tìm kiếm
 const publicApi = {
     // Lấy dữ liệu bộ lọc (tiện ích khách sạn, tiện ích phòng)
     getFiltersData: () => {

@@ -1,10 +1,38 @@
 import React from 'react';
-import { X, Ticket, Building2, CheckCircle, Banknote } from 'lucide-react';
-export default function OrderDetailModal({ isOpen, order, onClose }) {
-    if (!isOpen || !order) return null;
+import { X, Ticket, Building2, CheckCircle, Banknote, CreditCard } from 'lucide-react';
+import LoadingSpinner from './LoadingSpinner';
+import { resolveImageUrl } from '../../utils/imageUrl';
+
+export default function OrderDetailModal({ isOpen, order, onClose, onPayNow }) {
+    // Modal hiển thị chi tiết hóa đơn và các khoản phí của đơn đặt phòng
+    // Nếu modal không được yêu cầu mở, ta ẩn hoàn toàn
+    if (!isOpen) return null;
+
+    // Nếu modal đang mở nhưng chưa có dữ liệu order (đang gọi API), hiển thị giao diện Loading
+    if (isOpen && !order) {
+        return (
+            <div className="custom-modal-overlay" onClick={onClose} style={{ zIndex: 9999 }}>
+                <div className="custom-modal-content" onClick={e => e.stopPropagation()} style={{ position: 'relative', minHeight: '250px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <button className="close-btn" onClick={onClose} style={{ position: 'absolute', top: '15px', right: '15px', background: 'transparent', border: 'none', cursor: 'pointer' }}><X size={24} /></button>
+                    <LoadingSpinner text="Đang tải dữ liệu đơn hàng..." />
+                </div>
+            </div>
+        );
+    }
 
     const formatPrice = (price) => {
         return Number(price || 0).toLocaleString('vi-VN') + ' đ';
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '---';
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        const d = new Date(dateString);
+        if (isNaN(d.getTime())) return dateString;
+        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
     };
 
     const calculateNights = (inDate, outDate) => {
@@ -30,9 +58,8 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
     const discount = Number(order.discount_amount || 0);
     const finalTotal = subTotal + vatAmount - discount;
 
-    const originalPaid = order.payment_status === 1 ? Number(order.total_price) : 0;
+    const originalPaid = order.payment_status === 1 ? Number(order.deposit_amount || (order.total_amount / 2)) : 0;
     const remainingToPay = Math.max(0, finalTotal - originalPaid);
-
     const globalPromo = order.promotion;
     const hotelPromo = order.hotel_promotion || order.hotelPromotion;
 
@@ -67,7 +94,7 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                         fontSize: '20px', fontWeight: '900', letterSpacing: '3px',
                         opacity: 0.85, pointerEvents: 'none', zIndex: 99
                     }}>
-                        ĐÃ THANH TOÁN 100%
+                        ĐÃ THANH TOÁN CỌC
                     </div>
                 )}
 
@@ -75,8 +102,9 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                     <h3 style={{ margin: 0, fontSize: '20px', color: '#1e293b' }}>
                         Chi Tiết Đơn Hàng: <span style={{ color: '#2563eb' }}>{order.booking_code}</span>
                     </h3>
-                    <button className="close-btn" onClick={onClose}><X size={24} /></button>
+                    <button className="close-btn" onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}><X size={24} /></button>
                 </div>
+
                 {/* HIỂN THỊ TRẠNG THÁI HOÀN TIỀN NẾU LÀ ĐƠN ĐÃ HỦY VÀ CÓ YÊU CẦU HOÀN TIỀN */}
                 {order.status === 4 && order.refund_status > 0 && (
                     <div style={{ background: order.refund_status === 2 ? '#dcfce7' : '#fef3c7', padding: '15px', borderRadius: '8px', margin: '15px', border: `1px solid ${order.refund_status === 2 ? '#86efac' : '#fcd34d'}` }}>
@@ -93,6 +121,20 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                     </div>
                 )}
                 <div className="modal-body">
+                    {/* THÔNG TIN KHÁCH SẠN */}
+                    {(order.hotel || order.details?.[0]?.room_type?.hotel) && (
+                        <div style={{ marginBottom: '16px', padding: '12px 16px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                            <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>
+                                {order.hotel?.name || order.details?.[0]?.room_type?.hotel?.name}
+                            </div>
+                            {(order.hotel?.address || order.details?.[0]?.room_type?.hotel?.address) && (
+                                <div style={{ fontSize: '13px', color: '#64748b', marginTop: '3px' }}>
+                                    📍 {order.hotel?.address || order.details?.[0]?.room_type?.hotel?.address}{order.hotel?.city ? `, ${order.hotel.city}` : ''}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div className="info-grid">
                         <div>
                             <p className="info-row"><span>Khách hàng:</span> <strong>{order.guest_name}</strong></p>
@@ -100,8 +142,8 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                             <p className="info-row"><span>Email:</span> <strong>{order.guest_email}</strong></p>
                         </div>
                         <div>
-                            <p className="info-row"><span>Nhận phòng:</span> <strong>{order.check_in}</strong></p>
-                            <p className="info-row"><span>Trả phòng:</span> <strong>{order.check_out}</strong></p>
+                            <p className="info-row"><span>Nhận phòng:</span> <strong>{formatDate(order.check_in)}</strong></p>
+                            <p className="info-row"><span>Trả phòng:</span> <strong>{formatDate(order.check_out)}</strong></p>
                             <p className="info-row"><span>Số đêm:</span> <strong>{nights} đêm</strong></p>
                         </div>
                     </div>
@@ -165,13 +207,80 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                         </tbody>
                     </table>
 
+                    {order.status === 4 && order.refund_status > 0 && (
+                        <div style={{
+                            background: order.refund_status === 2 ? '#ecfdf5' : '#fffbeb',
+                            border: `1px solid ${order.refund_status === 2 ? '#a7f3d0' : '#fde68a'}`,
+                            borderRadius: '10px',
+                            padding: '16px',
+                            margin: '18px 0',
+                            fontSize: '13.5px'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                <span style={{ fontWeight: 'bold', color: order.refund_status === 2 ? '#065f46' : '#92400e', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CheckCircle size={16} color={order.refund_status === 2 ? '#059669' : '#d97706'} />
+                                    {order.refund_status === 2 ? 'ĐÃ HOÀN TIỀN THÀNH CÔNG' : 'ĐANG CHỜ HOÀN TIỀN'}
+                                </span>
+                                <span style={{ fontWeight: '900', fontSize: '16px', color: order.refund_status === 2 ? '#059669' : '#d97706' }}>
+                                    {formatPrice(order.refund_amount || order.deposit_amount)}
+                                </span>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', color: '#475569', fontSize: '12.5px', borderTop: `1px solid ${order.refund_status === 2 ? '#d1fae5' : '#fef3c7'}`, paddingTop: '8px' }}>
+                                <div>
+                                    <span>Ngân hàng nhận: </span>
+                                    <strong style={{ color: '#0f172a' }}>{order.refund_bank || '---'}</strong>
+                                </div>
+                                <div>
+                                    <span>Số tài khoản: </span>
+                                    <strong style={{ color: '#0284c7' }}>{order.refund_account || '---'}</strong>
+                                </div>
+                                <div>
+                                    <span>Chủ tài khoản: </span>
+                                    <strong style={{ color: '#0f172a' }}>{order.refund_account_name || '---'}</strong>
+                                </div>
+                                {order.cancellation_reason && (
+                                    <div>
+                                        <span>Lý do hủy: </span>
+                                        <strong style={{ color: '#475569' }}>{order.cancellation_reason}</strong>
+                                    </div>
+                                )}
+                            </div>
+
+                            {order.refund_status === 2 && order.refund_receipt_url && (
+                                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #a7f3d0', display: 'flex', justifyContent: 'flex-end' }}>
+                                    <a
+                                        href={resolveImageUrl(order.refund_receipt_url)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '5px',
+                                            color: '#059669',
+                                            fontWeight: 'bold',
+                                            fontSize: '12.5px',
+                                            textDecoration: 'none',
+                                            background: '#ffffff',
+                                            padding: '5px 12px',
+                                            borderRadius: '6px',
+                                            border: '1px solid #a7f3d0',
+                                            boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                                        }}
+                                    >
+                                        Xem ảnh biên lai chuyển khoản ↗
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div className="folio-summary">
                         <div className="summary-row">
                             <span>Tổng tiền phòng, dịch vụ & phụ phí:</span>
                             <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{formatPrice(subTotal)}</span>
                         </div>
 
-                        {/* 👉 HIỂN THỊ CHÍNH XÁC % VAT TỪ ĐƠN HÀNG */}
                         <div className="summary-row">
                             <span>Thuế VAT ({order.vat_rate || 10}%):</span>
                             <span>+ {formatPrice(vatAmount)}</span>
@@ -181,7 +290,7 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                             <div style={{ background: '#f8fafc', padding: '10px 15px', borderRadius: '8px', margin: '10px 0', border: '1px dashed #cbd5e1' }}>
                                 {globalPromo && (
                                     <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16a34a', fontWeight: 'bold', marginBottom: hotelPromo ? '8px' : '0' }}>
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Ticket size={16} /> Hiroto: {globalPromo.code}</span>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Ticket size={16} /> StayHub: {globalPromo.code}</span>
                                         <span>- {formatPrice(globalDiscountValue)}</span>
                                     </div>
                                 )}
@@ -214,6 +323,30 @@ export default function OrderDetailModal({ isOpen, order, onClose }) {
                             <span>{formatPrice(remainingToPay)}</span>
                         </div>
                     </div>
+
+                    {order.status === 0 && onPayNow && (
+                        <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                            <button
+                                onClick={() => { onClose(); onPayNow(order); }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '10px 20px',
+                                    borderRadius: '8px',
+                                    fontWeight: 'bold',
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                                }}
+                            >
+                                <CreditCard size={18} /> Thanh toán cọc ngay qua VNPAY
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

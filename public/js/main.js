@@ -1,6 +1,6 @@
 /*  ---------------------------------------------------
-  Template Name: Hiroto
-  Description:  Hiroto Hotel HTML Template
+  Template Name: StayHub
+  Description:  StayHub Hotel HTML Template
   Author: Colorlib
   Author URI: https://colorlib.com
   Version: 1.0
